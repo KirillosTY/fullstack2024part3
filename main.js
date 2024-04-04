@@ -1,7 +1,10 @@
 const express =  require("express")
 const app = express()
 var morgan = require('morgan')
+const cors = require('cors')
+app.use(express.static('dist'))
 app.use(express.json())
+app.use(cors())
 
 morgan.token('json',function get(req){
     return JSON.stringify(req.body)
@@ -30,6 +33,10 @@ let persons =  [
         "id": 1
       }
 ]
+app.use(express.json())
+app.use(cors())
+app.use(express.static('dist'))
+
 
 
 
@@ -66,8 +73,8 @@ app.post('/api/persons/', (request, response) => {
         response.status(406).send({error:"name must be unique"}).end()
 
 
-    }else if(!(person.number ==="" || person.number===null)
-    || (person.name ==="" || person.name===null)){
+    }else if(!(person.number ==="" || person.number===null
+    || person.name ==="" || person.name===null)){
         const id = Math.random()*10000
         person.id = id
         persons = persons.concat(person)
@@ -83,7 +90,6 @@ app.post('/api/persons/', (request, response) => {
 app.delete('/api/persons/:id', (request, response) => {
 
     const person = persons.find(p => p.id === Number(request.params.id))
-    
     persons = persons.filter(p => p.id !== Number(request.params.id))
     if(person){
         response.status(204).end()
@@ -93,8 +99,8 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 
+PORT = process.env.PORT || "3001"
 
-
-app.listen(3001, () => {
-    console.log("server running")
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
 })
